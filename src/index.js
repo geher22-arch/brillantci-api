@@ -27,11 +27,13 @@ const eleveRoutes = require('./routes/eleves');
 const matiereRoutes = require('./routes/matieres');
 const exerciceRoutes = require('./routes/exercices');
 const gamificationRoutes = require('./routes/gamification');
+const ficheRoutes = require('./routes/fiches');
 
 app.use('/api/eleves', eleveRoutes);
 app.use('/api/matieres', matiereRoutes);
 app.use('/api/exercices', exerciceRoutes);
 app.use('/api/gamification', gamificationRoutes);
+app.use('/api/fiches', ficheRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
