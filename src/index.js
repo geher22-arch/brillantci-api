@@ -4,14 +4,14 @@ require('dotenv').config();
 
 const app = express();
 
-const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:3001').split(',');
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.some(o => origin.startsWith(o.trim()))) {
-      callback(null, true);
-    } else {
-      callback(new Error('Non autorisé par CORS'));
-    }
+    if (!origin) return callback(null, true);
+    const allowed = (process.env.ALLOWED_ORIGINS || 'http://localhost:3001').split(',').map(o => o.trim());
+    const isAllowed = allowed.some(o => origin.startsWith(o))
+      || origin.endsWith('.netlify.app')
+      || origin === 'http://localhost:3001';
+    callback(isAllowed ? null : new Error('Non autorisé par CORS'), isAllowed);
   },
   credentials: true,
 }));
