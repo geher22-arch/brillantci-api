@@ -7,12 +7,13 @@ const jwt = require('jsonwebtoken');
 // Inscription
 router.post('/inscription', async (req, res) => {
   try {
-    const { prenom, nom, ecole, mot_de_passe } = req.body;
+    const { prenom, nom, ecole, mot_de_passe, classe } = req.body;
+    const niveauValide = ['CE1','CE2','CM1','CM2'].includes(classe) ? classe : 'CE2';
     const hash = await bcrypt.hash(mot_de_passe, 10);
     const result = await pool.query(
-      `INSERT INTO eleve (prenom, nom, ecole, mot_de_passe)
-       VALUES ($1, $2, $3, $4) RETURNING id, prenom, nom`,
-      [prenom, nom, ecole, hash]
+      `INSERT INTO eleve (prenom, nom, ecole, mot_de_passe, classe)
+       VALUES ($1, $2, $3, $4, $5) RETURNING id, prenom, nom, classe`,
+      [prenom, nom, ecole, hash, niveauValide]
     );
     res.json({ message: 'Inscription réussie !', eleve: result.rows[0] });
   } catch (err) {
@@ -40,7 +41,7 @@ router.post('/connexion', async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
-    res.json({ token, eleve: { id: eleve.id, prenom: eleve.prenom } });
+    res.json({ token, eleve: { id: eleve.id, prenom: eleve.prenom, classe: eleve.classe || 'CE2' } });
   } catch (err) {
     res.status(500).json({ erreur: err.message });
   }
