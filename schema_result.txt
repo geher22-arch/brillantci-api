@@ -1,0 +1,10 @@
+id : uuid
+lecon_id : uuid
+type : character varying
+enonce : text
+options : jsonb
+bonne_reponse : text
+points : integer
+created_at : timestamp without time zone
+
+[]
